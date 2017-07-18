@@ -60,7 +60,7 @@ public class PageIndicator extends FrameLayout {
         setIndicatorToViewpager(viewPager,0);
     }
 
-    public void setIndicatorToViewpager(ViewPager viewPager, int realPageCount) {
+    public void setIndicatorToViewpager(final ViewPager viewPager, int realPageCount) {
         int pagecount;
         if (realPageCount == 0) {
             pagecount = viewPager.getAdapter().getCount();
@@ -86,6 +86,15 @@ public class PageIndicator extends FrameLayout {
             public void onGlobalLayout() {
                 indicator.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 spacePoints = llIndicators.getChildAt(1).getLeft() - llIndicators.getChildAt(0).getLeft();
+
+                //根据viewpager默认选中的位置, 修改指示器的位置
+                int currentItem = viewPager.getCurrentItem();
+                int leftmargin = spacePoints * currentItem;
+                LayoutParams layoutParams = (LayoutParams)
+                        indicator.getLayoutParams();
+                layoutParams.leftMargin = leftmargin;
+
+                indicator.setLayoutParams(layoutParams);
             }
         });
 
