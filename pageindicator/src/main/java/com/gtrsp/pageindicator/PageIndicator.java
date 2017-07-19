@@ -19,7 +19,7 @@ public class PageIndicator extends FrameLayout {
     private LinearLayout llIndicators;
     private ImageView indicator;
     private Context context;
-    private int spacePoints;
+    private int spacePoints = 0;
     private int normalIndicator;//未选中指示器资源
     private int selectedIndicator;//选中指示器资源
 
@@ -57,14 +57,14 @@ public class PageIndicator extends FrameLayout {
     }
 
     public void setIndicatorToViewpager(ViewPager viewPager) {
-        setIndicatorToViewpager(viewPager,0);
+        setIndicatorToViewpager(viewPager, 0);
     }
 
     public void setIndicatorToViewpager(final ViewPager viewPager, int realPageCount) {
         int pagecount;
         if (realPageCount == 0) {
             pagecount = viewPager.getAdapter().getCount();
-        }else {
+        } else {
             pagecount = realPageCount;
         }
         for (int i = 0; i < pagecount; i++) {
@@ -81,22 +81,23 @@ public class PageIndicator extends FrameLayout {
             llIndicators.addView(backpoint);
         }
 
-        indicator.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                indicator.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                spacePoints = llIndicators.getChildAt(1).getLeft() - llIndicators.getChildAt(0).getLeft();
+        if (pagecount > 1)
+            indicator.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    indicator.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    spacePoints = llIndicators.getChildAt(1).getLeft() - llIndicators.getChildAt(0).getLeft();
 
-                //根据viewpager默认选中的位置, 修改指示器的位置
-                int currentItem = viewPager.getCurrentItem();
-                int leftmargin = spacePoints * currentItem;
-                LayoutParams layoutParams = (LayoutParams)
-                        indicator.getLayoutParams();
-                layoutParams.leftMargin = leftmargin;
+                    //根据viewpager默认选中的位置, 修改指示器的位置
+                    int currentItem = viewPager.getCurrentItem();
+                    int leftmargin = spacePoints * currentItem;
+                    LayoutParams layoutParams = (LayoutParams)
+                            indicator.getLayoutParams();
+                    layoutParams.leftMargin = leftmargin;
 
-                indicator.setLayoutParams(layoutParams);
-            }
-        });
+                    indicator.setLayoutParams(layoutParams);
+                }
+            });
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -124,6 +125,7 @@ public class PageIndicator extends FrameLayout {
 
     /**
      * 將 dip 或 dp 转换为 px, 保证尺寸大小不变
+     *
      * @param dipValue
      * @return
      */
