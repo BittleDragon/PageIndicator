@@ -2,6 +2,7 @@ package com.gtrsp.pageindicator;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
@@ -22,6 +23,7 @@ public class PageIndicator extends FrameLayout {
     private int spacePoints = 0;
     private int normalIndicator;//未选中指示器资源
     private int selectedIndicator;//选中指示器资源
+    private float leftMargin;
 
     public PageIndicator(Context context) {
         this(context, null);
@@ -36,6 +38,7 @@ public class PageIndicator extends FrameLayout {
                 R.drawable.shape_ring_white);
         selectedIndicator = a.getResourceId(R.styleable.PageIndicator_selected_indicator,
                 R.drawable.shape_point_white);
+        leftMargin = a.getDimension(R.styleable.PageIndicator_leftMargin, dip2px(10));
         a.recycle();
 
         LayoutParams params = new LayoutParams
@@ -52,8 +55,19 @@ public class PageIndicator extends FrameLayout {
 
         this.addView(llIndicators);
         this.addView(indicator);
+    }
 
+    public void setSelectedIndicator(@DrawableRes int selectedIndicator) {
+        this.selectedIndicator = selectedIndicator;
+        indicator.setImageResource(selectedIndicator);
+    }
 
+    public void setNormalIndicator(@DrawableRes int normalIndicator) {
+        this.normalIndicator = normalIndicator;
+    }
+
+    public void setLeftMargin(float leftMargin) {
+        this.leftMargin = dip2px(leftMargin);
     }
 
     public void setIndicatorToViewpager(ViewPager viewPager) {
@@ -74,13 +88,14 @@ public class PageIndicator extends FrameLayout {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams
                     (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             if (i > 0) {
-                layoutParams.leftMargin = dip2px(10);
+                layoutParams.leftMargin = (int) leftMargin;
             }
             backpoint.setLayoutParams(layoutParams);
 
             llIndicators.addView(backpoint);
         }
 
+        //获得点与点之间的间距
         if (pagecount > 1)
             indicator.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -121,18 +136,18 @@ public class PageIndicator extends FrameLayout {
 
             }
         });
+
     }
 
     /**
-     * 將 dip 或 dp 转换为 px, 保证尺寸大小不变
+     * 将 dip 或 dp 转换为 px, 保证尺寸大小不变
      *
      * @param dipValue
      * @return
      */
-    public int dip2px(float dipValue) {
+    public float dip2px(float dipValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dipValue * scale + 0.5f);
+        return dipValue * scale + 0.5f;
     }
-
 
 }

@@ -4,5 +4,6 @@
     <declare-styleable name="PageIndicator">
         <attr name="normal_indicator" format="reference"/>
         <attr name="selected_indicator" format="reference"/>
+        <attr name="leftMargin" format="dimension"/>
     </declare-styleable>
 </resources>
